@@ -1,3 +1,9 @@
+drop table Student;
+drop table Teacher;
+drop table Grade;
+drop table Course;
+drop table Notice;
+
 create table Student(
     sno char(15),
     sname char(6),
