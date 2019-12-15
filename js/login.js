@@ -1,17 +1,11 @@
+//数据库
+document.onload = function(){
+}
 
-window.onload = function init()
-{
-	document.getElementById('login_form').addEventListener('submit', submitForm);
+function studentLogin(){
+	document.login_form.action = 'http:127.0.0.1:3000/student_login';
+}
 
-	function subButtonClicked(type){
-		alert(type.value);
-		document.getElementById('stu_button').submit();
-	}
-
-	function submitForm(e){
-		e.preventDefault();
-
-		var no = getInputValue('sno');
-		var pwd = getInputValue('spwd');
-	}
+function teacherLogin(){
+	document.login_form.action = 'http:127.0.0.1:3000/teacher_login';
 }
