@@ -23,19 +23,15 @@ app.post('/stu_login.html', function(req, res){
 					throw err;
 				}
 				var name = result[0].sname;
-				data = data.toString().replace('$name$', result[0].sname);
+				data = data.toString().replace('$name$', name);
 				query('select * from Course;', function(err, rr){
 					if (err){
 						throw err;
 					}
 					var courseStr = '';
-					for (var i=0;;++i){
-						if (rr[i] != null){
-							var el = rr[i];
-							courseStr += '<li>' + el.cno + ': ' + el.cname + '</li>';
-						}else{
-							break;
-						}
+					for (var i=0;i<rr.length;++i){
+						var el = rr[i];
+						courseStr += '<li>' + el.cno + ': ' + el.cname + '</li>';
 					}
 					data = data.toString().replace('$li$', courseStr);
 					res.end(data.toString());
