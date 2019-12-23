@@ -102,6 +102,8 @@ app.post('/course_info.html', function(req, res) {
                         throw err;
                     }
                     var el = rr[0];
+                    console.log(el.gattend);
+                    console.log(el.gfinal);
                     data = data.toString().replace('$cno$', cno)
                         .replace('$cname$', el.cname)
                         .replace('$tname$', el.tname)
@@ -215,21 +217,21 @@ app.post('/change_grade', function(req, res) {
     			console.log(grades);
     			if(grades!=null&&grades!=undefined){
     				if(grades[0]!=""){
-    					query('update grade set gattend='+grades[0]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    					query('update grade set gattend='+grades[0]+' where grade.sno=\''+sno+'\' and grade.cno=\''+cno+'\';',(err, rr)=>{
     						if(err){
     							throw err;
     						}
     					});
     				}
     				if(grades[1]!=""){
-    					query('update grade set gdaily='+grades[1]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    					query('update grade set gdaily='+grades[1]+' where grade.sno=\''+sno+'\' and grade.cno=\''+cno+'\';',(err, rr)=>{
     						if(err){
     							throw err;
     						}
     					});
     				}
     				if(grades[2]!=""){
-    					query('update grade set gfinal='+grades[2]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    					query('update grade set gfinal='+grades[2]+' where grade.sno=\''+sno+'\' and grade.cno=\''+cno+'\';',(err, rr)=>{
     						if(err){
     							throw err;
     						}
