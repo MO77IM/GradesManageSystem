@@ -90,8 +90,27 @@ app.post('/teacher_login.html', function(req, res){
 					throw err;
 				}
 				data = data.toString().replace('$name$', result[0].tname);
-				res.write(data);
-				res.end();
+				
+				var cStr = 'select cno,cname '+
+				'from course ' +
+				'where course.tno=\''+id+'\';';
+				query(cStr, (err, rr)=>{
+					if(err){
+						throw err;
+					}
+					var courseStr='';
+					for(var i=0;;++i){
+						if(rr[i] != null){
+							var el = rr[i];
+							courseStr+='<li>'+el.cno+':&nbsp&nbsp&nbsp'+el.cname + 
+							'<button class="check" value="' + el.cno + '"style="float:right;margin-right:5px;width:50px;height:20px">查看</button></li>';
+						}else{
+							break;
+						}
+					}
+					data = data.toString().replace('$li$', courseStr);
+					res.end(data.toString());
+				});
 			});
 		}else{
 			res.end('登录失败');
@@ -141,6 +160,11 @@ app.post('/course_info.html', function(req, res){
 			res.end('查询失败');
 		}
 	});
+});
+
+//教师管理课程页面
+app.post('/teacher_course_info.html', function(req, res){
+	var cno = req.body.cno;
 });
 
 app.listen(3000, function(){
