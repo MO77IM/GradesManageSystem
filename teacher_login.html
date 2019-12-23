@@ -20,8 +20,11 @@
                     arr[i].onclick = function(){
                         var form = $("#check_form");
                         var input = $("<input type='hidden' name='cno'/>");
+                        var input2 = $("<input type='hidden' name='tno'/>");
+                        input2.attr('value',document.getElementById('tno').innerHTML);
                         input.attr('value', this.value);
                         form.attr("action", "teacher_course_info.html");
+                        form.append(input2);
                         form.append(input);
                         form.submit();
                     }

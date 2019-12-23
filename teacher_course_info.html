@@ -1,39 +1,56 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<title>教师课程管理</title>
-	<style type="text/css">
-		.grade{
-			width:70px;
-		}
-	</style>
+    <meta charset="utf-8">
+    <title>教师课程管理</title>
+    <style type="text/css">
+    .grade {
+        width: 70px;
+    }
+    </style>
+    <script type="text/javascript">
+    window.onload = function() {
+        document.getElementById("submit_inform").onclick = function() {
+        	var form = document.getElementById("course_form");
+        	form.action="/release_notice";
+        	form.submit();
+        }
+    }
+    </script>
 </head>
+
 <body>
-	<h1 align="center">$cname$</h1>
-	<div name="pad">
-		<div style="border:1px solid black">
-			<h3 align="center">班级概览</h3>
-			<div>
-				<p>平均分：$num$</p>
-				<p>通过率：$num2$</p>
-			</div>
-		</div>
-		<div style="border:1px solid black">
-			<h3 align="center">学生列表</h3>
-			<ul name="stu_list">
-				$li$
-			</ul>
-			<button id="submit_change" style="padding-bottom: 8px;margin-bottom: 5px">完成打分</button>
-		</div>
-		<div style="border:1px solid black">
-			<h3 align="center">课堂通知</h3>
-			<ul>
-				$li2$
-			</ul>
-			<input type="text" name="inform_content" placeholder="在此输入通知">
-			<button name="submit_inform">发布通知</button>
-		</div>
-	</div>
+    <form id="course_form" method="post">
+        <h1 align="center">$cname$</h1>
+        <input type="text" name="cno" id="cno" value="$cno$" style="display:none;">
+        <input type="text" name="cname" id="cname" value="$cname2$" style="display:none;">
+        <input type="text" name="tno" id="tno" value="$tno$" style="display:none;">
+        <div name="pad">
+            <div style="border:1px solid black">
+                <h3 align="center">班级概览</h3>
+                <div>
+                    <p>平均分：$num$</p>
+                    <p>通过率：$num2$</p>
+                </div>
+            </div>
+            <div style="border:1px solid black">
+                <h3 align="center">学生列表</h3>
+                <ul name="stu_list">
+                    $li$
+                </ul>
+                <button id="submit_change" style="padding-bottom: 8px;margin-bottom: 5px">完成打分</button>
+            </div>
+            <div style="border:1px solid black">
+                <h3 align="center">课堂通知</h3>
+                <ul>
+                    $li2$
+                </ul>
+                <input type="text" name="inform_content" placeholder="在此输入通知">
+                <button id="submit_inform">发布通知</button>
+            </div>
+        </div>
+    </form>
 </body>
+
 </html>
