@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 var app = express();
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //返回学生登录界面
@@ -27,47 +27,48 @@ app.post('/stu_login.html', function(req, res){
 });
 
 //返回教师登录界面
-app.post('/teacher_login.html', function(req, res){
-	var id = req.body.sno;
-	var pwd = req.body.spwd;
-	var str = 'select * from Teacher where tno=\'' + id + '\' && tpwd=\'' + pwd + '\';';
-	query(str, (err, result)=>{
-		if (err){
-			throw err;
-		}
-		if (result[0] != null){
-			fs.readFile(__dirname + '/teacher_login.html', function(err, data){
-				if (err){
-					throw err;
-				}
-				data = data.toString().replace('$name$', result[0].tname);
-				
-				//查询教师教学的课程
-				var cStr = `select cno, cname
-								from course 
-								where course.tno=\'`+id+`\';`;
-				query(cStr, (err, rr)=>{
-					if(err){
-						throw err;
+app.post('/teacher_login.html', function(req, res) {
+    var id = req.body.sno;
+    var pwd = req.body.spwd;
+    var str = 'select * from Teacher where tno=\'' + id + '\' && tpwd=\'' + pwd + '\';';
+    query(str, (err, result) => {
+        if (err) {
+            throw err;
+        }
+        if (result[0] != null) {
+            fs.readFile(__dirname + '/teacher_login.html', function(err, data) {
+                if (err) {
+                    throw err;
+                }
+
+                var cStr = 'select cno,cname ' +
+                    'from course ' +
+                    'where course.tno=\'' + id + '\';';
+                query(cStr, (err, rr) => {
+                    if (err) {
+                        throw err;
+                    }
+                    var courseStr = '';
+                    for (var i = 0;; ++i) {
+                        if (rr[i] != null) {
+                            var el = rr[i];
+                            courseStr += '<li>' + el.cno + ':&nbsp&nbsp&nbsp' + el.cname +
+                                '<button class="check" value="' + el.cno + '"style="float:right;margin-right:5px;width:50px;height:20px">查看</button></li>';
+                        } else {
+                            break;
+                        }
 					}
-					var courseStr='';
-					for(var i=0;;++i){
-						if(rr[i] != null){
-							var el = rr[i];
-							courseStr+='<li>'+el.cno+':&nbsp&nbsp&nbsp'+el.cname + 
-							'<button class="check" value="' + el.cno + '"style="float:right;margin-right:5px;width:50px;height:20px">查看</button></li>';
-						}else{
-							break;
-						}
-					}
-					data = data.toString().replace('$li$', courseStr);
-					res.end(data.toString());
-				});
-			});
-		}else{
-			res.end('登录失败', 'utf-8');
-		}
-	});
+					data = data.toString()
+						.replace('$tname$', result[0].tname)
+						.replace('$li$', courseStr)
+						.replace('$tno$', result[0].tno);
+                    res.end(data);
+                });
+            });
+        } else {
+            res.end('登录失败');
+        }
+    });
 });
 
 //课程详细信息页面
@@ -133,11 +134,98 @@ app.post('/select_class', (req, res)=>{
 });
 
 //教师管理课程页面
-app.post('/teacher_course_info.html', function(req, res){
-	var cno = req.body.cno;
+app.post('/teacher_course_info.html', function(req, res) {
+    var cno = req.body.cno;
+    query('select cname from course where course.cno=\'' + cno + '\';', (err, result) => {
+        if (err) {
+            throw err;
+        }
+        if (result[0] != null) {
+            fs.readFile(__dirname + '/teacher_course_info.html', function(err, data) {
+                if (err) {
+                    throw err;
+                }
+                data = data.toString().replace('$cname$', result[0].cname);
+                query('select avg(gattend+gdaily+gfinal) from grade where grade.cno=\'' + cno + '\';', (err, rr) => {
+                    if (err) {
+                        throw err;
+                    }
+                    if (rr[0] != null) {
+                        var json = JSON.stringify(rr[0]);
+                        var avg = JSON.parse(json);
+
+                        data = data.toString().replace('$num$', avg['avg(gattend+gdaily+gfinal)']==null? 0.0:avg['avg(gattend+gdaily+gfinal)']);
+                    } else
+                        data = data.toString().replace('$num$', '0.0');
+                });
+                query('select count(*) from grade where grade.cno=\'' + cno + '\' and grade.gattend+grade.gdaily+grade.gfinal>=60;', (err, rr) => {
+                    if (err) {
+                        throw err;
+                    }
+                    var total = 0;
+                    var rate = 0;
+                    var pass = rr[0] == null ? 0 : JSON.parse(JSON.stringify(rr[0]))['count(*)'];
+                    query('select count(*) from grade where grade.cno=\'' + cno + '\';', (err, rr) => {
+                        if (err) {
+                            throw err;
+                        }
+                        total = rr[0] == null ? 0 : JSON.parse(JSON.stringify(rr[0]))['count(*)'];
+                    });
+                    if (total == 0)
+                        rate = 0;
+                    else
+                        rate = pass / total;
+                    //console.log(total);
+                    data = data.toString().replace('$num2$', rate);
+                });
+                //获取学生列表
+                query('select sname,student.sno,gattend,gdaily,gfinal ' +
+                    'from student,grade ' +
+                    'where grade.cno=\'' + cno + '\' and student.sno=grade.sno;', (err, rr) => {
+                        if (err) {
+                            throw err;
+                        }
+                        var sList = '';
+                        for (var i = 0;; ++i) {
+                            if (rr[i] != null) {
+                                var el = rr[i];
+                                sList += '<li>' + el.sno + '&nbsp&nbsp' + el.sname + '&nbsp&nbsp出勤：<input class="grade" type="text" id="' +
+                                    el.sno + '_attend" placeholder="' + el.gattend + '">&nbsp平时：<input class="grade" type="text" id="' + el.sno +
+                                    '_daily" placeholder="' + el.gdaily + '">&nbsp期末：<input class="grade" type="text" id="' + el.sno +
+                                    '_final" placeholder="' + el.gfinal + '"></li>'
+                            } else {
+                                break;
+                            }
+                        }
+                        //console.log("stulist");
+                        data = data.toString().replace('$li$', sList);
+                    });
+
+                //课堂通知
+                query('select * from notice where notice.cno=\'' + cno + '\';', (err, rr) => {
+                    if (err) {
+                        throw err;
+                    }
+                    var nList = '';
+                    for (var i = 0;; ++i) {
+                        if (rr[i] != null) {
+                            var el = rr[i];
+                            nList += '<li>' + el.ntime + '<p style="height:150px">' + el.ntext + '</p></li>';
+                        } else {
+                            break;
+                        }
+                    }
+                    data = data.toString().replace('$li2$', nList);
+                    res.end(data.toString());
+                });
+            });
+        } else {
+            res.end("查询失败");
+        }
+    });
 });
 
-app.listen(3000, function(){
+app.listen(3000, function() {
     console.log('running on 3000...');
 });
 
