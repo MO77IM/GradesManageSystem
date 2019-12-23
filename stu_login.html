@@ -10,11 +10,10 @@
             }
         </style>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" src="cookie.js"></script>
     <script charset='utf-8' type="text/javascript">
     window.onload = () => {
         var welcome = document.getElementsByTagName('h1')[0];
-        welcome.innerHTML = '欢迎 ' + '$name$' + ' 同学';
+        welcome.innerHTML = '欢迎 ' + '$sname$' + ' 同学';
 
         var arr = document.getElementsByClassName("check");
 
@@ -22,14 +21,20 @@
             arr[i].onclick = function() {
             	var myform = $("#select_class_form");
                 var input = $("<input type='hidden' name='check_cno'/>");
+                var input2 = $("<input type='hidden' name='check_sno'/>");
                 input.attr('value', this.value);
+                input2.attr('value', document.getElementById('sno').value);
                 myform.attr("action", "course_info.html");
                 myform.append(input);
                 myform.append(input2);
-                myform.submit()
+                myform.submit();
             }
         }
     };
+
+    function onSelectClass(){
+        document.getElementById('select_class_form').action='/select_class';
+    }
     </script>
 </head>
 
@@ -38,7 +43,8 @@
     <form id="select_class_form" name="select_class_form" method="post">
         <div id='pad'>
             <h1 id='welcome'></h1>
-            <h3 id='sno'>$sno$</h3>
+            <input id='sno' name='sno' style='display:none' value='$sno$'>
+            <input id='sname' name='sname' style='display:none' value='$sname$'>
             <div style="border:1px solid black">
                 <h3>
                     当前可供选择的课程信息:
@@ -46,9 +52,12 @@
                 <ul name='course_list'>
                     $li$
                 </ul>
-                <button id="submit_select" style="padding-bottom: 8px;margin-bottom: 5px">提交选课信息</button>
+                <button id="submit_select" style="padding-bottom: 8px;margin-bottom: 5px" onclick='onSelectClass()'>提交选课信息</button>
             </div>
             <div style="border:1px solid black">
+                <h3>
+                    总学分：$totalScore$
+                </h3>
                 <h3>
                     已经选修的课程：
                 </h3>

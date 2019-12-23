@@ -1,19 +1,22 @@
 function setCookie(cname, cvalue) {
-    document.cookie = cname + "=" + cvalue + ";" + ";path=/";
+    var Days = 30;
+    var exp = new Date();
+    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+    document.cookie = cname + "=" + cvalue +
+     ";SameSite=None;secure;expires="+exp.toGMTString();
 } 
 
 function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i <ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-         }
-         if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-         }
-     }
-    return "";
+    var getCookie=document.cookie.replace(/[]/g, "");
+    var arrCookie = getCookie.split(":");
+    console.log(arrCookie);
+    var tips;
+    for(var i=0;i<arrCookie.length;i++){
+        var arr = arrCookie[i].split("=");
+        if(cname == arr[0]){
+            tips = arr[1];
+            break;
+        }
+    }
+    return tips;
 } 
