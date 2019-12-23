@@ -23,8 +23,9 @@ app.post('/stu_login.html', function(req, res){
 					throw err;
 				}
 				var name = result[0].sname;
-				data = data.toString().replace('$name$', name).replace('$sno$', id);
-				query('select * from Course;', function(err, rr){
+				query(`select Course.cno, Course.cname from Course, Grade
+						where not (Grade.sno=\'` + id + `\' and Course.cno=Grade.cno);
+				`, function(err, rr){
 					if (err){
 						throw err;
 					}
@@ -37,14 +38,15 @@ app.post('/stu_login.html', function(req, res){
 						}else{
 							break;
 						}
-
 					}
-					data = data.toString().replace('$li$', courseStr);
-					//res.end(data.toString());
+					data = data.toString()
+						.replace('$name$', name)
+						.replace('$sno$', id)
+						.replace('$li$', courseStr);
 				})
 
 				//查询该学生已选课程与任课教师
-				query('select cno,cname,tname ' + 
+				query('select cno,cname,tname ' +
 				'from course, teacher ' +
 				'where exists( ' +
 				'select * ' +
@@ -66,8 +68,7 @@ app.post('/stu_login.html', function(req, res){
 					}
 					data = data.toString().replace('$li2$', sCourseStr);
 					res.end(data.toString());
-				})
-				
+				});
 			});
 		}else{
 			res.end('登录失败');
@@ -89,7 +90,8 @@ app.post('/teacher_login.html', function(req, res){
 				if (err){
 					throw err;
 				}
-				data = data.toString().replace('$name$', result[0].tname);
+				data = data.toString().replace('$name$', result[0].tname)
+					.replace('$tno$', id);
 				res.write(data);
 				res.end();
 			});
@@ -125,15 +127,15 @@ app.post('/course_info.html', function(req, res){
 						throw err;
 					}
 					var el=rr[0];
-					data = data.toString().replace('$cno$', cno);
-					data = data.toString().replace('$cname$', el.cname);
-					data = data.toString().replace('$tname$', el.tname);
-					data = data.toString().replace('$cscore$', el.cscore);
-					data = data.toString().replace('$ctype$', el.ctype);
-					data = data.toString().replace('$gattend$', el.gattend);
-					data = data.toString().replace('$gdaily$', el,gdaily);
-					data = data.toString().replace('$gfinal$', el.gfinal);
-					data = data.toString().replace('$gtotal$', el.gattend+el.gdaily+el.gfinal);
+					data = data.toString().replace('$cno$', cno)
+						.replace('$cname$', el.cname)
+						.replace('$tname$', el.tname)
+						.replace('$cscore$', el.cscore)
+						.replace('$ctype$', el.ctype)
+						.replace('$gattend$', el.gattend)
+						.replace('$gdaily$', el,gdaily)
+						.replace('$gfinal$', el.gfinal)
+						.replace('$gtotal$', el.gattend+el.gdaily+el.gfinal);
 				});
 				res.end(data.toString());
 			});
