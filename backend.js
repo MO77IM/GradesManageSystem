@@ -23,7 +23,7 @@ app.post('/stu_login.html', function(req, res){
 					throw err;
 				}
 				var name = result[0].sname;
-				data = data.toString().replace('$name$', name);
+				data = data.toString().replace('$name$', name).replace('$sno$', id);
 				query('select * from Course;', function(err, rr){
 					if (err){
 						throw err;
