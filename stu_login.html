@@ -10,7 +10,6 @@
             }
         </style>
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" src="cookie.js"></script>
     <script charset='utf-8' type="text/javascript">
     window.onload = () => {
         var welcome = document.getElementsByTagName('h1')[0];
@@ -22,10 +21,12 @@
             arr[i].onclick = function() {
             	var myform = $("#select_class_form");
                 var input = $("<input type='hidden' name='check_cno'/>");
+                var input2 = $("<input type='hidden' name='check_sno'/>");
                 input.attr('value', this.value);
+                input2.attr('value', document.getElementById('sno').innerHTML);
                 myform.attr("action", "course_info.html");
                 myform.append(input);
-                //myform.append(input2);
+                myform.append(input2);
                 myform.submit()
             }
         }

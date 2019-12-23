@@ -121,7 +121,7 @@ app.post('/teacher_login.html', function(req, res){
 //课程详细信息页面
 app.post('/course_info.html', function(req, res){
 	var cno = req.body.check_cno;
-	var sno = req.body.sno;
+	var sno = req.body.check_sno;
 	var str = 'select * from course where course.cno=\''+ cno +'\';';
 	query(str, (err, result)=>{
 		if(err){
@@ -135,10 +135,10 @@ app.post('/course_info.html', function(req, res){
 				data=data.toString().replace('$name$', result[0].cname);
 				
 				//获取学生在该课程的详细信息
-				var cStr = 'select cname,tname,cscore,ctype,gattend,gdaily,gfinal' +
-				'from course,teacher,grade' +
+				var cStr = 'select cname,tname,cscore,ctype,gattend,gdaily,gfinal ' +
+				'from course,teacher,grade ' +
 				'where grade.sno=\'' + sno +'\' and grade.cno=\''+cno+
-				'\' and course.cno=\''+cno+'\i and teacher.tno=course.tno;';
+				'\' and course.cno=\''+cno+'\' and teacher.tno=course.tno;';
 				query(cStr, (err, rr)=>{
 					if(err){
 						throw err;
@@ -150,11 +150,11 @@ app.post('/course_info.html', function(req, res){
 					data = data.toString().replace('$cscore$', el.cscore);
 					data = data.toString().replace('$ctype$', el.ctype);
 					data = data.toString().replace('$gattend$', el.gattend);
-					data = data.toString().replace('$gdaily$', el,gdaily);
+					data = data.toString().replace('$gdaily$', el.gdaily);
 					data = data.toString().replace('$gfinal$', el.gfinal);
 					data = data.toString().replace('$gtotal$', el.gattend+el.gdaily+el.gfinal);
+					res.end(data.toString());
 				});
-				res.end(data.toString());
 			});
 		}else{
 			res.end('查询失败');
