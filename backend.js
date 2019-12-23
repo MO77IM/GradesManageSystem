@@ -319,7 +319,7 @@ function postStudentPage(res, name, id) {
                         var el = rr[i];
                         totalScore += Number(el.cscore);
                         sCourseStr += '<li>' + el.cno + ': ' + el.cname + '&nbsp&nbsp&nbsp&nbsp&nbsp任课教师:' + el.tname +
-                            '<button class="check" value="' + el.cno + '" style="float:right;margin-right:5px;width:50px">查看</button>' + '</li>';
+                            '<button class="check" value="' + el.cno + '" style="float:right;margin-right:5px;width:50px;height:18px">查看</button>' + '</li>';
                     } else {
                         break;
                     }
