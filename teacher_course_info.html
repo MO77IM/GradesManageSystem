@@ -16,6 +16,12 @@
         	form.action="/release_notice";
         	form.submit();
         }
+
+        document.getElementById("submit_change").onclick = function(){
+        	var form = document.getElementById("course_form");
+        	form.action="/change_grade";
+        	form.submit();
+        }
     }
     </script>
 </head>

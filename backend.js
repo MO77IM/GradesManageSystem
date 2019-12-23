@@ -200,6 +200,54 @@ app.post('/release_notice', function(req, res) {
     }
 });
 
+app.post('/change_grade', function(req, res) {
+    var cno = req.body.cno;
+    var cname = req.body.cname;
+    var tno = req.body.tno;
+    query('select sno from grade where grade.cno=\''+cno+'\';', (err, rr)=>{
+    	if(err){
+    		throw err;
+    	}
+    	for(var i=0;;++i){
+    		if(rr[i]!=null){
+    			var sno = rr[i].sno;
+    			grades=req.body[sno];
+    			console.log(grades);
+    			if(grades!=null&&grades!=undefined){
+    				if(grades[0]!=""){
+    					query('update grade set gattend='+grades[0]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    						if(err){
+    							throw err;
+    						}
+    					});
+    				}
+    				if(grades[1]!=""){
+    					query('update grade set gdaily='+grades[1]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    						if(err){
+    							throw err;
+    						}
+    					});
+    				}
+    				if(grades[2]!=""){
+    					query('update grade set gfinal='+grades[2]+' where grade.sno=\''+sno+'\';',(err, rr)=>{
+    						if(err){
+    							throw err;
+    						}
+    					});
+    				}
+    			}
+    		}else{
+    			break;
+    		}
+    	}
+    });
+    event.on('data_changed', function(){
+    	postTeacherCourse(res, cno, cname, tno);
+    });
+    setTimeout(function() {
+                event.emit('data_changed');
+            }, 1000);
+});
 
 /*
 app.post('/teacher_mark', (req, res)=>{
@@ -310,23 +358,23 @@ function postTeacherCourse(res, cno, cname, tno) {
             } else
                 data = data.toString().replace('$num$', '0.0');
         });
-        query('select count(*) from grade where grade.cno=\'' + cno + '\' and grade.gattend+grade.gdaily+grade.gfinal>=60;', (err, rr) => {
-            if (err) {
-                throw err;
+        query('select' + '(select cast(count(*) as decimal(18,2)) '+
+        	'from grade where grade.cno=\''+cno+'\' and '+
+        	'grade.gattend+gdaily+gfinal>=60)/ '+
+        	'(select cast(count(*) as decimal(18,2)) from grade '+
+        	'where grade.cno=\''+cno+'\');', (err, rr) => {
+            if(err){
+            	throw err;
             }
-            var total = 0;
-            var rate = 0;
-            var pass = rr[0] == null ? 0 : JSON.parse(JSON.stringify(rr[0]))['count(*)'];
-            query('select count(*) from grade where grade.cno=\'' + cno + '\';', (err, rr) => {
-                if (err) {
-                    throw err;
-                }
-                total = rr[0] == null ? 0 : JSON.parse(JSON.stringify(rr[0]))['count(*)'];
-            });
-            if (total == 0)
-                rate = 0;
-            else
-                rate = pass / total;
+            var rate;
+            if(rr[0]!=null&&rr[0]!=undefined)
+            	rate = JSON.parse(JSON.stringify(rr[0]))['(select cast(count(*) as decimal(18,2)) '+
+        	'from grade where grade.cno=\''+cno+'\' and '+
+        	'grade.gattend+gdaily+gfinal>=60)/ '+
+        	'(select cast(count(*) as decimal(18,2)) from grade '+
+        	'where grade.cno=\''+cno+'\')'];
+        	else
+        		rate = 0.0;
             data = data.toString().replace('$num2$', rate);
         });
 
@@ -341,10 +389,10 @@ function postTeacherCourse(res, cno, cname, tno) {
                 for (var i = 0;; ++i) {
                     if (rr[i] != null) {
                         var el = rr[i];
-                        sList += '<li>' + el.sno + '&nbsp&nbsp' + el.sname + '&nbsp&nbsp出勤：<input class="grade" type="text" id="' +
-                            el.sno + '_attend" placeholder="' + el.gattend + '">&nbsp平时：<input class="grade" type="text" id="' + el.sno +
-                            '_daily" placeholder="' + el.gdaily + '">&nbsp期末：<input class="grade" type="text" id="' + el.sno +
-                            '_final" placeholder="' + el.gfinal + '"></li>';
+                        sList += '<li>' + el.sno + '&nbsp&nbsp' + el.sname + '&nbsp&nbsp出勤：<input class="grade" type="text" name="' +
+                            el.sno + '" placeholder="' + el.gattend + '">&nbsp平时：<input class="grade" type="text" name="' + el.sno +
+                            '" placeholder="' + el.gdaily + '">&nbsp期末：<input class="grade" type="text" name="' + el.sno +
+                            '" placeholder="' + el.gfinal + '"></li>';
                     } else {
                         break;
                     }
