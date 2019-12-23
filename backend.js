@@ -1,5 +1,6 @@
 var fs = require('fs');
 var mysql = require('mysql');
+var events = require('events');
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -117,20 +118,46 @@ app.post('/course_info.html', function(req, res){
 
 //学生选课
 app.post('/select_class', (req, res)=>{
+	var eventEmitter = new events.EventEmitter();
+	var cnos = [];
 	var id = req.body.sno;
 	var name = req.body.sname;
 	for (var cno in req.body){
 		if (cno == 'sno' || cno == 'sname'){
 			continue;
 		}
-		query('insert into Grade value(\'' + cno + '\', \'' + id + '\', 0 , 0, 0);'
-			,(err, result)=>{
-				if (err){
-					throw err;
-				}
-				postStudentPage(res, name, id);
-		});
+		cnos = cnos.concat(cno);
 	}
+	//依次处理
+	cnos.forEach((el, index) => {
+		var qstr = `select * from Grade
+						where cno=\'` + el + `\' and sno=\'` + id + `\';`;
+		var istr = 'insert into Grade value(\'' + el + '\', \'' + id + '\', 0, 0, 0);';
+		query(qstr, (err, result)=>{
+			if (err){
+				throw err;
+			}
+			if (result[0] == null){ //学生未选择此课
+				//插入学生选课信息
+				query(istr, (err, result)=>{
+					if (err){
+						throw err;
+					}
+					if (index == cnos.length-1){
+						eventEmitter.emit('select_end');
+					}
+				});
+			}else{
+				if (index == cnos.length-1){
+					eventEmitter.emit('select_end');
+				}
+			}
+		})
+	})
+	//等待选课操作结束
+	eventEmitter.on('select_end', ()=>{
+		postStudentPage(res, name, id)
+	});
 });
 
 //教师管理课程页面
@@ -189,9 +216,9 @@ app.post('/teacher_course_info.html', function(req, res) {
                         for (var i = 0;; ++i) {
                             if (rr[i] != null) {
                                 var el = rr[i];
-                                sList += '<li>' + el.sno + '&nbsp&nbsp' + el.sname + '&nbsp&nbsp出勤：<input class="grade" type="text" id="' +
-                                    el.sno + '_attend" placeholder="' + el.gattend + '">&nbsp平时：<input class="grade" type="text" id="' + el.sno +
-                                    '_daily" placeholder="' + el.gdaily + '">&nbsp期末：<input class="grade" type="text" id="' + el.sno +
+                                sList += '<li>' + el.sno + '&nbsp&nbsp' + el.sname + '&nbsp&nbsp出勤：<input class="grade" type="text" name="' +
+                                    el.sno + '_attend" placeholder="' + el.gattend + '">&nbsp平时：<input class="grade" type="text" name="' + el.sno +
+                                    '_daily" placeholder="' + el.gdaily + '">&nbsp期末：<input class="grade" type="text" name="' + el.sno +
                                     '_final" placeholder="' + el.gfinal + '"></li>'
                             } else {
                                 break;
@@ -224,6 +251,20 @@ app.post('/teacher_course_info.html', function(req, res) {
         }
     });
 });
+
+/*
+app.post('/teacher_mark', (req, res)=>{
+	//更新信息
+	query(`update Grade
+			gattend=\'`+ newgattend + `\', gdaily=\'`+  newgdaily + `\', gfinal=\'` + newgfinal + `\'
+			where sno=\'` + sno + `'\';`, (err, result)=>{
+				if (err){
+					throw err;
+				}
+				postTeacherCoursePage(res, cno, tno);
+			});
+});
+*/
 
 app.listen(3000, function() {
     console.log('running on 3000...');
