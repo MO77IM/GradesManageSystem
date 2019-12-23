@@ -35,7 +35,7 @@ create table Grade(
 create table Notice(
     cno char(14),
     tno char(10),
-    ntime char(15),
+    ntime char(25),
     ntext char(100)
 );
 
@@ -81,4 +81,4 @@ insert into Grade values
     ("c004", "2017141461004", 0, 40, 50);
 
 insert into Notice values
-    ("c001", "t000", "20191213 17:22", "这是管理员发到数据库课的第一个公告");
+    ("c001", "t000", "2019-12-13 17:22:13", "这是管理员发到数据库课的第一个公告");

@@ -1,5 +1,6 @@
 var fs = require('fs');
 var mysql = require('mysql');
+var events = require('events');
 var express = require('express');
 var bodyParser = require('body-parser');
 var async = require('async');
@@ -175,6 +176,7 @@ app.post('/teacher_course_info.html', function(req, res) {
     });
 });
 
+
 app.post('/release_notice', function(req, res) {
     var cno = req.body.cno;
     var cname = req.body.cname;
@@ -197,6 +199,21 @@ app.post('/release_notice', function(req, res) {
         });
     }
 });
+
+
+/*
+app.post('/teacher_mark', (req, res)=>{
+	//更新信息
+	query(`update Grade
+			gattend=\'`+ newgattend + `\', gdaily=\'`+  newgdaily + `\', gfinal=\'` + newgfinal + `\'
+			where sno=\'` + sno + `'\';`, (err, result)=>{
+				if (err){
+					throw err;
+				}
+				postTeacherCoursePage(res, cno, tno);
+			});
+});
+*/
 
 
 app.listen(3000, function() {
