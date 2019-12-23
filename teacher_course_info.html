@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>教师课程管理</title>
+</head>
+<body>
+	<h1 align="center">$cname$</h1>
+	<div name="pad">
+		<div style="border:1px solid black">
+			<h3 align="center">班级概览</h3>
+			<div>
+				<p>平均分：$num$</p>
+				<p>通过率：$num2$</p>
+			</div>
+		</div>
+		<div style="border:1px solid black">
+			<h3 align="center">学生列表</h3>
+			<ul name="stu_list">
+				$li$
+			</ul>
+			<button id="submit_change" style="padding-bottom: 8px;margin-bottom: 5px">完成打分</button>
+		</div>
+		<div style="border:1px solid black">
+			<h3 align="center">课堂通知</h3>
+			<ul>
+				$li2$
+			</ul>
+			<input type="text" name="inform_content" placeholder="在此输入通知">
+			<button name="submit_inform">发布通知</button>
+		</div>
+	</div>
+</body>
+</html>

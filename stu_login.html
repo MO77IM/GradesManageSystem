@@ -1,31 +1,62 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>login</title>
-        <style>
-            #pad{
+
+<head>
+    <meta charset="utf-8">
+    <title>login</title>
+    <style>
+        #pad{
                 text-align: center;
             }
         </style>
-        <script charset="utf-8" type="text/javascript">
-            window.onload = ()=>{
-                var welcome = document.getElementsByTagName('h1')[0];
-                welcome.innerHTML = '欢迎 ' + '$name$' + ' 同学';
-            };
-        </script>
-    </head>
-    <body>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="cookie.js"></script>
+    <script charset='utf-8' type="text/javascript">
+    window.onload = () => {
+        var welcome = document.getElementsByTagName('h1')[0];
+        welcome.innerHTML = '欢迎 ' + '$name$' + ' 同学';
+
+        var arr = document.getElementsByClassName("check");
+
+        for (var i = 0; i < arr.length; i++) {
+            arr[i].onclick = function() {
+            	var myform = $("#select_class_form");
+                var input = $("<input type='hidden' name='check_cno'/>");
+                input.attr('value', this.value);
+                myform.attr("action", "course_info.html");
+                myform.append(input);
+                myform.append(input2);
+                myform.submit()
+            }
+        }
+    };
+    </script>
+</head>
+
+<body>
+    <form id="select_class_form" name="select_class_form" method="post">
         <div id='pad'>
             <h1 id='welcome'>
             </h1>
-            
-            <h3>
-                当前可供选择的课程信息:
-            </h3>
-            <ul name = 'course_list'>
-                $li$
-            </ul>
+            <div style="border:1px solid black">
+                <h3>
+                    当前可供选择的课程信息:
+                </h3>
+                <ul name='course_list'>
+                    $li$
+                </ul>
+                <button id="submit_select" style="padding-bottom: 8px;margin-bottom: 5px">提交选课信息</button>
+            </div>
+            <div style="border:1px solid black">
+                <h3>
+                    已经选修的课程：
+                </h3>
+                <ul name="selected_course_list">
+                    $li2$
+                </ul>
+            </div>
         </div>
-    </body>
+    </form>
+</body>
+
 </html>

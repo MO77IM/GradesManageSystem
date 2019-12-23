@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='utf-8'>
+	<title>课程信息</title>
+	<style type="text/css">
+		.item{
+			float:top;
+			height:26px;
+		}
+		.header{
+			font-size:20px;
+			position:absolute;
+			left: 0%;
+			margin-top:3px;
+			margin-bottom:3px;
+		}
+		.content{
+			font-size:20px;
+			position:absolute;
+			right: 0%;
+			margin-top:3px;
+			margin-bottom:3px;
+		}
+	</style>
+	<script type="text/javascript" src="cookie.js"></script>
+</head>
+<body>
+	<h1 align="center">$name$</h1>
+	<div style="border:1px solid black;position:absolute;width:400px;left:50%;margin-left:-200px">
+		<div class="item">
+			<p class="header">课程编号</p>
+			<p class="content">$cno$</p>
+		</div>
+		<div class="item">
+			<p class="header">课程名称</p>
+			<p class="content">$cname$</p>
+		</div>
+		<div class="item">
+			<p class="header">任课教师</p>
+			<p class="content">$tname$</p>
+		</div>
+		<div class="item">
+			<p class="header">课程学分</p>
+			<p class="content">$cscore$</p>
+		</div>
+		<div class="item">
+			<p class="header">课程类型</p>
+			<p class="content">$ctype$</p>
+		</div>
+		<div class="item">
+			<p class="header">出勤成绩</p>
+			<p class="content">$gattend$</p>
+		</div>
+		<div class="item">
+			<p class="header">平时成绩</p>
+			<p class="content">$gdaily$</p>
+		</div>
+		<div class="item">
+			<p class="header">期末成绩</p>
+			<p class="content">$gfinal$</p>
+		</div>
+		<div class="item">
+			<p class="header">总成绩</p>
+			<p class="content">$gtotal$</p>
+		</div>
+	</div>
+	<div style="border: 1px solid black; position:absolute;top:	350px;width:800px;left:50%;margin-left:-400px">
+		<h3 align="center">课程通知</h3>
+	</div>
+</body>
+</html>
